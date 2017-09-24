@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="545.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Display">
+   <children>
+      <LineChart fx:id="tempgraph" layoutX="49.0" layoutY="38.0" prefHeight="279.0" prefWidth="500.0" title="Temperature Reading" AnchorPane.leftAnchor="49.0" AnchorPane.topAnchor="38.0">
+        <xAxis>
+          <CategoryAxis autoRanging="false" endMargin="0.0" gapStartAndEnd="false" label="seconds ago from current time" startMargin="0.0">
+               <tickLabelFont>
+                  <Font name="Bodoni MT Black" size="8.0" />
+               </tickLabelFont>
+            </CategoryAxis>
+        </xAxis>
+        <yAxis>
+          <NumberAxis autoRanging="false" label="Temp (C)" lowerBound="10.0" minorTickCount="10" side="RIGHT" upperBound="50.0" />
+        </yAxis>
+      </LineChart>
+      <Label fx:id="tempdisplay" layoutX="49.0" layoutY="338.0" prefHeight="39.0" prefWidth="382.0" text="Real-Time Temp">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
+      <Button fx:id="ledbutton" layoutX="401.0" layoutY="403.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="148.0" text="LED On/Off" />
+      <Button fx:id="submitbutton" layoutX="401.0" layoutY="465.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="148.0" text="Submit" />
+      <Label layoutX="76.0" layoutY="457.0" text="Min Temp" />
+      <Label layoutX="75.0" layoutY="482.0" text="Max Temp" />
+      <Label layoutX="49.0" layoutY="508.0" text="Phone Number" />
+      <TextField fx:id="mintempinput" layoutX="150.0" layoutY="453.0" promptText="Enter Temperature" />
+      <TextField fx:id="maxtempinput" layoutX="150.0" layoutY="478.0" promptText="Enter Temperature" />
+      <TextField fx:id="phonenumberinput" layoutX="150.0" layoutY="504.0" promptText="Enter Phone Number" />
+   </children>
+</AnchorPane>
