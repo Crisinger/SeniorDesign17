@@ -50,12 +50,14 @@ public class DisplayTemp extends Application {
     String phoneNumber;
     TextField minTempInput, maxTempInput, phoneNumberInput;
 
+
+
     @Override
     public void start(Stage primaryStage){
         tempValue = new Label();
         tempValue.setFont(new Font("TimesRoman",26));
         //Connect to the arduino uno port
-        connectArduino("COM1");
+        connectArduino("COM3");
 
 
 
@@ -105,7 +107,7 @@ public class DisplayTemp extends Application {
         LEDpower = new ToggleButton("LED Power");
         LEDpower.setOnAction((ActionEvent event) -> {
             toggleLED();
-            addOneValTest();
+            //addOneValTest();
         });
 
 
@@ -137,7 +139,7 @@ public class DisplayTemp extends Application {
             Run tests and further monitor functions here
 
          */
-        FillGraphTest();
+        //FillGraphTest();
 
 
     }
@@ -186,12 +188,23 @@ public class DisplayTemp extends Application {
     FUNCTIONS
      */
 
+    private void setLabel(){
+        tempValue.setText(String.valueOf(currentTemp));
+    }
+
 
     private void setVals(){
+        if (!maxTempInput.getText().equals("")){
+            maxTemp = Integer.valueOf(maxTempInput.getText());
+        }
+        if (!phoneNumberInput.getText().equals("")) {
+            phoneNumber = phoneNumberInput.getText();
 
-        phoneNumber = phoneNumberInput.getText();
-        maxTemp = Integer.valueOf(maxTempInput.getText());
-        minTemp = Integer.valueOf(minTempInput.getText());
+        }
+        if (!minTempInput.getText().equals("")) {
+            minTemp = Integer.valueOf(minTempInput.getText());
+
+        }
 
     }
     private void checkCriticalTemp(){
@@ -206,9 +219,9 @@ public class DisplayTemp extends Application {
     private void toggleLED(){
         try {
             if (LEDpower.isSelected()){
-                arduinoPort.writeByte((byte)0x01); //led on
+                for (int i = 0;i<50;i++) arduinoPort.writeByte((byte)0x01); //led on
             } else {
-                arduinoPort.writeByte((byte)0x00); //led off
+                for (int i = 0;i<50;i++) arduinoPort.writeByte((byte)0x00); //led off
             }
         } catch (SerialPortException ex) {
             ex.printStackTrace();
@@ -230,10 +243,9 @@ public class DisplayTemp extends Application {
 
 
 
-    public boolean connectArduino(String port){
+    public boolean connectArduino(String port) {
 
         System.out.println("connectArduino");
-
         boolean success = false;
         SerialPort serialPort = new SerialPort(port);
         try {
@@ -248,22 +260,21 @@ public class DisplayTemp extends Application {
             serialPort.addEventListener((SerialPortEvent serialPortEvent) -> {
                 if(serialPortEvent.isRXCHAR()){
                     try {
-
-                        byte[] b = serialPort.readBytes();
-                        int value = b[0] & 0xff;    //convert to int
-                        String st = String.valueOf(value);
-                        //TODO INTERPRET DATA FROM HARDWARE HERE
+                        String s = serialPort.readString(2);
+                        int value = Integer.valueOf(s);
                         /*
                         THIS CODE WILL EXECUTE EVERY TIME WE RECEIVE A BIT. THIS IS ESSENTIALLY THE LOOP
                          */
-                        setVals(); //set the critical temps to new values
-                        checkCriticalTemp();
-
                         Platform.runLater(() -> {
-                            series.setName(st);
-                            shiftData(value); //in 5V scale
+                            System.out.println(s);
+                            shiftData(value);
+                            setVals(); //set the critical temps to new values
+                            checkCriticalTemp();
+                            currentTemp = value;
+                            setLabel();
+                            toggleLED();
                         });
-                        //TODO update label in ui Thread
+
 
                     } catch (SerialPortException ex) {
                         Logger.getLogger(DisplayTemp.class.getName())
