@@ -57,7 +57,7 @@ public class DisplayTemp extends Application {
         tempValue = new Label();
         tempValue.setFont(new Font("TimesRoman",26));
         //Connect to the arduino uno port
-        connectArduino("COM3");
+
 
 
 
@@ -133,7 +133,7 @@ public class DisplayTemp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-
+        connectArduino("COM3");
 
         /*
             Run tests and further monitor functions here
@@ -219,9 +219,11 @@ public class DisplayTemp extends Application {
     private void toggleLED(){
         try {
             if (LEDpower.isSelected()){
-                for (int i = 0;i<50;i++) arduinoPort.writeByte((byte)0x01); //led on
+                //for (int i = 0;i<50;i++)
+                    arduinoPort.writeByte((byte)0x01); //led on
             } else {
-                for (int i = 0;i<50;i++) arduinoPort.writeByte((byte)0x02); //led off
+                //for (int i = 0;i<50;i++)
+                    arduinoPort.writeByte((byte)0x00); //led off
             }
         } catch (SerialPortException ex) {
             ex.printStackTrace();
