@@ -219,11 +219,11 @@ public class DisplayTemp extends Application {
     private void toggleLED(){
         try {
             if (LEDpower.isSelected()){
-                //for (int i = 0;i<50;i++)
+                for (int i = 0;i<2;i++)
                     arduinoPort.writeByte((byte)0x01); //led on
             } else {
-                //for (int i = 0;i<50;i++)
-                    arduinoPort.writeByte((byte)0x00); //led off
+                for (int i = 0;i<2;i++)
+                    arduinoPort.writeByte((byte)0x02); //led off
             }
         } catch (SerialPortException ex) {
             ex.printStackTrace();
@@ -268,13 +268,14 @@ public class DisplayTemp extends Application {
                         THIS CODE WILL EXECUTE EVERY TIME WE RECEIVE A BIT. THIS IS ESSENTIALLY THE LOOP
                          */
                         Platform.runLater(() -> {
+                            //toggleLED();
                             System.out.println(s);
                             shiftData(value);
                             setVals(); //set the critical temps to new values
                             checkCriticalTemp();
                             currentTemp = value;
                             setLabel();
-                            toggleLED();
+                            //toggleLED();
                         });
 
 
