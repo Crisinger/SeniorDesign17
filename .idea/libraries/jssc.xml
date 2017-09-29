@@ -2,6 +2,7 @@
   <library name="jssc">
     <CLASSES>
       <root url="jar://E:/Users/Charlie/Documents/DevelopmentSoftware/jSSC-2.7.0-Release/jSSC-2.7.0-Release/jssc.jar!/" />
+      <root url="jar://E:/A_School/Twilio/twilio-7.14.5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

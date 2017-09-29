@@ -5,35 +5,26 @@
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Side;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortException;
-import jssc.SerialPortList;
 import javafx.scene.*;
-
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.Thread.sleep;
 import static jssc.SerialPort.MASK_RXCHAR;
 
 public class DisplayTemp extends Application {
@@ -49,7 +40,7 @@ public class DisplayTemp extends Application {
     int minTemp = 0;
     String phoneNumber;
     TextField minTempInput, maxTempInput, phoneNumberInput;
-
+    int timeSinceLastText = 0;
 
 
     @Override
@@ -107,7 +98,6 @@ public class DisplayTemp extends Application {
         LEDpower = new ToggleButton("LED Power");
         LEDpower.setOnAction((ActionEvent event) -> {
             toggleLED();
-            //addOneValTest();
         });
 
 
@@ -133,7 +123,7 @@ public class DisplayTemp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        connectArduino("COM3");
+        connectArduino("COM1");
 
         /*
             Run tests and further monitor functions here
@@ -208,10 +198,20 @@ public class DisplayTemp extends Application {
 
     }
     private void checkCriticalTemp(){
-        if (currentTemp > maxTemp){
-            sendTextMessage();
-        } else if (currentTemp < minTemp){
-            sendTextMessage();
+        if (timeSinceLastText < 45 && timeSinceLastText != 0){
+            if (timeSinceLastText == 44){
+                timeSinceLastText = 0;
+            } else timeSinceLastText++;
+        }
+        else {
+            if (currentTemp > maxTemp) {
+                timeSinceLastText++;
+                sendTextMessage();
+
+            } else if (currentTemp < minTemp) {
+                timeSinceLastText++;
+                sendTextMessage();
+            }
         }
     }
 
@@ -268,14 +268,12 @@ public class DisplayTemp extends Application {
                         THIS CODE WILL EXECUTE EVERY TIME WE RECEIVE A BIT. THIS IS ESSENTIALLY THE LOOP
                          */
                         Platform.runLater(() -> {
-                            //toggleLED();
-                            System.out.println(s);
+                            //System.out.println(s);
                             shiftData(value);
                             setVals(); //set the critical temps to new values
                             checkCriticalTemp();
                             currentTemp = value;
                             setLabel();
-                            //toggleLED();
                         });
 
 
@@ -298,27 +296,12 @@ public class DisplayTemp extends Application {
         return success;
     }
 
-    public void disconnectArduino(){
-
-        System.out.println("disconnectArduino()");
-        if(arduinoPort != null){
-            try {
-                arduinoPort.removeEventListener();
-
-                if(arduinoPort.isOpened()){
-                    arduinoPort.closePort();
-                }
-
-            } catch (SerialPortException ex) {
-                Logger.getLogger(DisplayTemp.class.getName())
-                        .log(Level.SEVERE, null, ex);
-            }
-        }
-    }
 
     private void sendTextMessage(){
-        //TODO Colleen
-        System.out.println("text message sent");
+        if (!(phoneNumber.equals(""))) {
+            SendText.sendTextMsg(phoneNumber);
+            //System.out.println("text message sent");
+        }
     }
     public static void main(String[] args) {
         launch(args);
