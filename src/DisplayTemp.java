@@ -49,7 +49,7 @@ public class DisplayTemp extends Application {
         tempValue.setFont(new Font("TimesRoman",26));
         //Connect to the arduino uno port
 
-
+        tempValue.setText("The box is currently off or disconnected");
 
 
 
@@ -143,7 +143,7 @@ public class DisplayTemp extends Application {
     public void addOneNullTest(){
 
         shiftData(-1);
-        tempValue.setText("NA C"); //sets the label
+        //tempValue.setText("NA C"); //sets the label
     }
     public void addOneValTest(){
         Random rand = new Random();
@@ -180,6 +180,9 @@ public class DisplayTemp extends Application {
 
     private void setLabel(){
         tempValue.setText(String.valueOf(currentTemp));
+    }
+    private void setLabelText(String s){
+        tempValue.setText(String.valueOf(s));
     }
 
 
@@ -267,6 +270,15 @@ public class DisplayTemp extends Application {
                         /*
                         THIS CODE WILL EXECUTE EVERY TIME WE RECEIVE A BIT. THIS IS ESSENTIALLY THE LOOP
                          */
+                        if (value == -1){
+                            s = serialPort.readString(2);
+                            if (Integer.valueOf(s) == 27){
+                                Platform.runLater(() -> {
+                                   setLabelText("Sensor is unplugged");
+                                });
+                            }
+
+                        }
                         Platform.runLater(() -> {
                             //System.out.println(s);
                             shiftData(value);
@@ -291,6 +303,7 @@ public class DisplayTemp extends Application {
             Logger.getLogger(DisplayTemp.class.getName())
                     .log(Level.SEVERE, null, ex);
             System.out.println("SerialPortException: " + ex.toString());
+
         }
 
         return success;
